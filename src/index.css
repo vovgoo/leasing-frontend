@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Montserrat", sans-serif;
+}
+
+.main-image-gradient {
+  background: linear-gradient(to bottom, white 20%, transparent 55%);
+}
