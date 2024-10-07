@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
@@ -36,7 +36,7 @@ const OrderDetails = () => {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:8080/api/v1/users/order?id=${id}`, {
+                const response = await axios.get(`http://localhost:8080/api/v1/payments/order?id=${id}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
@@ -65,30 +65,30 @@ const OrderDetails = () => {
                         </div>
                         
                         <div className='w-full bg-white flex flex-col px-5 py-5'>
-                            <h1 className='font-bold text-xl'>{data && data.payments.rentals.cars.make + " " + data.payments.rentals.cars.model}</h1>
-                            <h1 className='font-semibold text-gray-500 text-sm'>{data && data.payments.rentals.cars.make + " - Год выпуска " + data.payments.rentals.cars.year}</h1>
+                            <h1 className='font-bold text-xl'>{data && data.cars && data.cars.make + " " + data.cars.model}</h1>
+                            <h1 className='font-semibold text-gray-500 text-sm'>{data && data.cars && data.cars.make + " - Год выпуска " + data.cars.year}</h1>
                         </div>
 
                         <div className='w-full flex flex-col bg-white font-bold text-sm px-5 gap-y-2'>
                             <div className='flex justify-between w-full'>
                                 <h1>Год выпуска</h1>
-                                <h1>{data && data.payments.rentals.cars.year}</h1>
+                                <h1>{data && data.cars && data.cars.year}</h1>
                             </div>
 
                             <div className='flex justify-between w-full'>
                                 <h1>Пробег</h1>
-                                <h1>{data && data.payments.rentals.cars.mileage} км</h1>
+                                <h1>{data && data.cars && data.cars.mileage} км</h1>
                             </div>
 
                             <div className='flex justify-between w-full'>
                                 <h1>Цвет</h1>
-                                <h1>{data && data.payments.rentals.cars.color}</h1>
+                                <h1>{data && data.cars && data.cars.color}</h1>
                             </div>
                         </div>
 
                         <div className='w-full bg-white px-5 pb-5 pt-10 flex justify-between items-center flex-col gap-y-5'>
-                            <h1 className='font-bold text-2xl'>${data && data.payments.rentals.cars.price}/час</h1>
-                            <h1 className='cursor-pointer rounded-xl px-5 py-2 text-sm w-full text-center bg-black text-white transition-all hover:bg-amber-500 hover:text-black duration-300 font-bold'>Подробнее</h1>
+                            <h1 className='font-bold text-2xl'>${data && data.cars && data.cars.price}/час</h1>
+                            <Link to={`/car/${data && data.cars && data.cars.id}`} className='cursor-pointer rounded-xl px-5 py-2 text-sm w-full text-center bg-black text-white transition-all hover:bg-amber-500 hover:text-black duration-300 font-bold'>Подробнее</Link>
                         </div>
                     </div>
                 </div>
@@ -99,21 +99,21 @@ const OrderDetails = () => {
                         <div className='flex flex-col gap-y-5'>
                             <div className='flex justify-between'>
                                 <h1>Дата начала:</h1>
-                                <h1>{data && formatDate(data.payments.rentals.startDate)}</h1>
+                                <h1>{data && formatDate(data.rentals.startDate)}</h1>
                             </div>
                             <div className='flex justify-between'>
                                 <h1>Дата конца:</h1> 
-                                <h1>{data && formatDate(data.payments.rentals.endDate)}</h1>
+                                <h1>{data && formatDate(data.rentals.endDate)}</h1>
                             </div>
                             <div className='flex justify-between'>
                                 <h1>Машина:</h1>
-                                <h1>{data && data.payments.rentals.cars.make + " " + data.payments.rentals.cars.model + " " + data.payments.rentals.cars.year}</h1>
+                                <h1>{data && data.cars.make + " " + data.cars.model + " " + data.cars.year}</h1>
                             </div>
                             <div className='flex justify-between'>
                                 <h1>Статус аренды:</h1>
                                 <div className='flex items-center justify-center'>
-                                    <h1 className='mr-3'>{data && statusTexts[data.payments.rentals.rentalsStatus]}</h1>
-                                    <div className={`w-3 h-3 ${data && statusColors[data.payments.rentals.rentalsStatus]} rounded-full`}></div>
+                                    <h1 className='mr-3'>{data && statusTexts[data.rentals.rentalsStatus]}</h1>
+                                    <div className={`w-3 h-3 ${data && statusColors[data.rentals.rentalsStatus]} rounded-full`}></div>
                                 </div>
                             </div>
                             <div className='flex justify-between'>
@@ -126,8 +126,8 @@ const OrderDetails = () => {
                             </div>   
                         </div>
                     </div>    
-                    <CountdownTimer endDate={data && data.payments.rentals.endDate}/>
-                    {data && new Date(data.payments.rentals.endDate) - new Date() > 0 && (
+                    <CountdownTimer endDate={data && data.rentals.endDate}/>
+                    {data && new Date(data.rentals.endDate) - new Date() > 0 && (
                         <div>
                             <button className='w-full py-2 bg-black rounded-lg text-white transition-all duration-300 hover:bg-amber-500 hover:text-black'>Завершить аренду</button>
                         </div>
@@ -137,11 +137,11 @@ const OrderDetails = () => {
                 <div className='w-1/4 flex flex-col'>
                     <h1 className='font-bold w-full text-center mb-5 text-lg'>Ваш чек</h1>
                     <div className='shadow-cars w-full h-full px-10 py-5 flex flex-col font-bold'>
-                        <h1 className='font-bold w-full text-center text-lg'>ORDER #{data && data.payments.id} FOR {data && data.payments.rentals.user.firstName}</h1>
+                        <h1 className='font-bold w-full text-center text-lg'>ORDER #{data && data.user && data.user.id} FOR {data && data.orderUser && data.orderUser.firstname}</h1>
                         <hr className='my-5'/>
                         <div className='w-full h-full flex flex-col gap-y-5'>
                             <div className='w-full flex justify-between'>
-                                <h1>{data && data.payments.rentals.cars.make + " " + data.payments.rentals.cars.model + " " + data.payments.rentals.cars.year}</h1>
+                                <h1>{data && data.cars.make + " " + data.cars.model + " " + data.cars.year}</h1>
                                 <h1>{data && data.payments.amount * 0.6}$</h1>
                             </div>
                             <hr/>

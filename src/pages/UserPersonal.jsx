@@ -45,7 +45,7 @@ const UserPersonal = () => {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:8080/api/v1/users/personalRentals?id=${metadata.page + 1}`, {
+                const response = await axios.get(`http://localhost:8080/api/v1/rentals?pageNumber=${metadata.page + 1}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json',
@@ -61,7 +61,6 @@ const UserPersonal = () => {
                 }));
 
                 setMetadata(response.data.metadata);
-                
             } catch (error) {
                 setError(error.message);
             } finally {
@@ -92,7 +91,6 @@ const UserPersonal = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Form Data:', formData);
     };
 
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -156,10 +154,16 @@ const UserPersonal = () => {
                 <h1 className='font-bold text-bold w-full text-center mb-5'>История поездок</h1>
                 <div className='w-full flex flex-col justify-between h-full relative'>
                     <div className={`gap-y-10 flex flex-col ${ (metadata.page + 1) * metadata.size < metadata.totalElements ? "mb-20" : ""}`}>
+                        {data.rentalsList && data.rentalsList.content.length === 0 && (
+                            <h1 className="my-10 font-semibold w-full text-center">
+                                Похоже, вы еще не совершали поездок :(
+                            </h1>
+                        )}
                         {data && data.rentalsList && data.rentalsList.content && data.rentalsList.content.length > 0 && (data.rentalsList.content.map((rental, index) => (
                             <CarOrder orderId={index + 1} startData={formatDate(rental.startDate)} endDate={formatDate(rental.endDate)} car={rental.cars.make + " " + rental.cars.model + " " + rental.cars.year} rentalsStatus={rental.rentalsStatus} id={rental.id} />                    
                         )))}
                     </div>
+
                     { (metadata.page + 1) * metadata.size < metadata.totalElements && <button onClick={loadMoreRentalsHandler} className='absolute bottom-10 w-full select-none cursor-pointer rounded-xl py-2 px-3 text-sm text-center bg-black text-white transition-all hover:bg-amber-500 hover:text-black duration-300 font-bold'>Загрузить еще</button>}
                 </div>
             </div>

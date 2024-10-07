@@ -10,6 +10,10 @@
   background: linear-gradient(to bottom, white 20%, transparent 55%);
 }
 
+.cars-image-gradient {
+  background: linear-gradient(to bottom, rgb(0, 0, 0) 35%, transparent 100%);
+}
+
 .contacts-image-gradient {
   background: linear-gradient(to bottom, white 0%, transparent 100%);
 }
@@ -58,4 +62,14 @@ textarea::-webkit-scrollbar-thumb {
 
 .notification-exit {
   animation: slideOut 0.5s forwards;
+}
+
+.outlined-text {
+  font-size: 200px; 
+  color: transparent; 
+  text-shadow: 
+      0 0 5px rgba(255, 255, 255, 1), 
+      0 0 10px rgba(255, 255, 255, 1), 
+      0 0 15px rgba(255, 255, 255, 1), 
+      0 0 20px rgba(255, 255, 255, 1);
 }
